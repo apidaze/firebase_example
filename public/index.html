@@ -28,67 +28,81 @@ php -S localhost:8001
   <script src="./app.js"></script>
 </head>
 <body>
-  <div>
-    <h3>Firebase database</h3>
+  <h3>Instructions</h3>
+  <div id="instructionsSectionId">
+    Make sure to have the following database attributes set in Firebase :
+    <code>
+      <ul style="list-style-type: none">
+        <li><b>apikey</b> (your APIdaze API key), mandatory</li>
+        <li><b>number</b> (a phone number provided by APIdaze), optional</li>
+      </ul>
+    </code>
+  </div>
+  <h3>Firebase database</h3>
+  <code>
+    <ul style="list-style-type: none">
+      <li><b>APIdaze API key</b> : <span id="apiKeyId"></span></li>
+      <li><b>Active number</b> : <span id="activeNumberId"></span></li>
+    </ul>
+  </code>
+  <div id="callActionsSectionId" style="display: none">
     <div>
-      <div>APIdaze API key : <code id="apiKeyId"></code></div>
-      <div>Active number : <code id="activeNumberId"> </code></div>
+      <h3>Place a call</h3>
+      <table border="0">
+        <tr>
+          <td style="width: 150px">
+            <input type="text" id="number_to_call" placeholder="E.g. : 33123456789"/>
+          </td>
+          <td>
+            <input id="call" type="button" disabled="true" style="width: 90px" value="Loading..." />
+          </td>
+          <td>
+            <input id="hangup" type="button" disabled="true" style="width: 90px" value="Hangup" />
+          </td>
+        </tr>
+      </table>
     </div>
-    <h3>Place a call</h3>
-    <table border="0">
-      <tr>
-        <td style="width: 150px">
-          <input type="text" id="number_to_call" placeholder="E.g. : 33123456789"/>
-        </td>
-        <td>
-          <input id="call" type="button" disabled="true" style="width: 90px" value="Loading..." />
-        </td>
-        <td>
-          <input id="hangup" type="button" disabled="true" style="width: 90px" value="Hangup" />
-        </td>
-      </tr>
-    </table>
-  </div>
-  <div>
-    <h3>Incoming calls to +33170567760</h3>
-    <table border="0">
-      <tr>
-        <td style="width: 150px">
-          <div id="call_to_answer"></div>
-        </td>
-        <td>
-          <input id="answer" type="button" disabled="true" style="width: 90px" value="Answer" />
-        </td>
-        <td>
-          <input id="hangup-in" type="button" disabled="true" style="width: 90px" value="Hangup" />
-        </td>
-      </tr>
-    </table>
-  </div>
-  <div>
-    <h3>Conference</h3>
-    <table border="0">
-      <tr>
-        <td style="width: 150px">
-          <div id="my_status_inroom"></div>
-        </td>
-        <td>
-          <input id="joinroom" type="button" style="width: 90px" value="Join" class="kick_button" />
-        </td>
-      </tr>
-      <tr id="invite_number_to_conference" >
-        <td style="width: 150px">
-          <input type="text" placeholder="E.g. : 33123456789" disabled=true/>
-        </td>
-        <td>
-          <input type="button" style="width: 90px" value="Invite phone" disabled=true/>
-        </td>
-      </tr>
-    </table>
-    <table id="members_in_room_id">
-      <tbody>
-      </tbody>
-    </table>
+    <div>
+      <h3>Incoming calls to +33170567760</h3>
+      <table border="0">
+        <tr>
+          <td style="width: 150px">
+            <div id="call_to_answer"></div>
+          </td>
+          <td>
+            <input id="answer" type="button" disabled="true" style="width: 90px" value="Answer" />
+          </td>
+          <td>
+            <input id="hangup-in" type="button" disabled="true" style="width: 90px" value="Hangup" />
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div>
+      <h3>Conference</h3>
+      <table border="0">
+        <tr>
+          <td style="width: 150px">
+            <div id="my_status_inroom"></div>
+          </td>
+          <td>
+            <input id="joinroom" type="button" style="width: 90px" value="Join" class="kick_button" />
+          </td>
+        </tr>
+        <tr id="invite_number_to_conference" >
+          <td style="width: 150px">
+            <input type="text" placeholder="E.g. : 33123456789" disabled=true/>
+          </td>
+          <td>
+            <input type="button" style="width: 90px" value="Invite phone" disabled=true/>
+          </td>
+        </tr>
+      </table>
+      <table id="members_in_room_id">
+        <tbody>
+        </tbody>
+      </table>
+    </div>
   </div>
 </body>
 </html>

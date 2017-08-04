@@ -15,6 +15,7 @@ $(document).ready(function(){
 
   const activeNumberObj = document.getElementById("activeNumberId");
   const apiKeyObj = document.getElementById("apiKeyId");
+  const callActionsSectionObj = document.getElementById("callActionsSectionId");
 
   let APIdazeAPIkey = null;
 
@@ -30,6 +31,11 @@ $(document).ready(function(){
     console.log("apikey updated", JSON.stringify(snapshot.val()))
     apiKeyObj.innerHTML = snapshot.val() || "Please set the 'apikey' attribute in Firebase";
     APIdazeAPIkey = snapshot.val();
+    if (snapshot.val() === null) {
+      callActionsSectionObj.style.display = "none";
+    } else {
+      callActionsSectionObj.style.display = "inherit";      
+    }
   });
 
   channel.bind('incomingcall', function(data) {
