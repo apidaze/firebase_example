@@ -1,0 +1,12 @@
+{
+  "rules": {
+    "number": {
+			".read": true,
+    	".write": false
+    },
+    "apikey": {
+			".read": true,
+    	".write": false
+    }
+  }
+}
