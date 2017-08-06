@@ -4,7 +4,7 @@ and Firebase.
 
 # Want to build your own ?
 
-This application is deployed to https://apidaze-example.firebaseio.com/.
+This application is deployed to https://apidaze-example.firebaseapp.com.
 If you'd like to host this code, you just need to set up your own Firebase web
 application and clone/deploy this repository.
 
