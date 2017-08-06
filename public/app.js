@@ -1,6 +1,7 @@
 $(document).ready(function(){
   function updateActiveNumbers(numberString) {
     activeNumberObj.innerHTML = numberString;
+    incomingCallNumberObj.innerHTML = numberString;
   }
 
   console.log("Initialized");
@@ -13,11 +14,14 @@ $(document).ready(function(){
   var other_members_in_room = [];
   var room_name = '';
 
+  let APIdazeClientObj = null;
+  let APIdazeAPIkey = null;
+
   const activeNumberObj = document.getElementById("activeNumberId");
   const apiKeyObj = document.getElementById("apiKeyId");
   const callActionsSectionObj = document.getElementById("callActionsSectionId");
-
-  let APIdazeAPIkey = null;
+  const incomingCallNumberObj = document.getElementById("incomingCallNumberId");
+  const incomingCallsTableObj = document.getElementById("incomingCallsTableId");
 
   /**
   * Firebase listeners
@@ -34,7 +38,20 @@ $(document).ready(function(){
     if (snapshot.val() === null) {
       callActionsSectionObj.style.display = "none";
     } else {
-      callActionsSectionObj.style.display = "inherit";      
+      callActionsSectionObj.style.display = "inherit";
+      resetClient();
+    }
+  });
+
+  firebase.database().ref('incomingcalls').on('value', function(snapshot) {
+    console.log("incomingcalls updated", JSON.stringify(snapshot.val()))
+    apiKeyObj.innerHTML = snapshot.val() || "Please set the 'apikey' attribute in Firebase";
+    APIdazeAPIkey = snapshot.val();
+    if (snapshot.val() === null) {
+      callActionsSectionObj.style.display = "none";
+    } else {
+      callActionsSectionObj.style.display = "inherit";
+      resetClient();
     }
   });
 
@@ -50,34 +67,18 @@ $(document).ready(function(){
       channel_data = {};
     }
   });
-  // APIdaze client initialization
+  // APIdaze APIdazeClientObj initialization
   var call = {};
   var audiostarted = false;
-  var client = new APIdaze.CLIENT({
-    type:"webrtc",
-    debug:true,
-    audio:true,
-    video:false,
-    apiKey: APIdazeAPIkey,
-    forcewsurl: "wss://ws2.apidaze.io:443",
-    onReady: function(){
-      console.log("Client ready");
-      $("#call").attr("disabled", false).val("Call");
-    },
-    onDisconnected: function(){
-      console.log("Client disconnected");
-      $("#call").attr("disabled", false).val("Call");
-    }
-  });
   function resetClient() {
-    client.freeALL();
-    client = new APIdaze.CLIENT({
+    APIdazeClientObj && APIdazeClientObj.freeALL();
+    APIdazeClientObj = new APIdaze.CLIENT({
       type:"webrtc",
       debug:true,
       audio:true,
       video:false,
       apiKey: APIdazeAPIkey,
-      forcewsurl: "wss://ws2.apidaze.io:443",
+      forcewsurl: "wss://ws2-old.apidaze.io:443",
       onReady: function(){
         $("#call").attr("disabled", false).val("Call");
       },
@@ -91,7 +92,7 @@ $(document).ready(function(){
   $("#answer").click(function(){
     $("#hangup-in").attr("disabled", false);
     $("#answer").attr("disabled", true).val("In call");
-    call = client.call(
+    call = APIdazeClientObj.call(
       {
         destination_number: "interception",
         uuid_to_intercept: channel_data.uuid
@@ -110,7 +111,7 @@ $(document).ready(function(){
   // Place a call
   $("#call").click(function(){
     $("#call").attr("disabled", true).val("Calling");
-    call = client.call(
+    call = APIdazeClientObj.call(
       {
         destination_number: $("#number_to_call").val(),
         action: "directcall"
@@ -167,7 +168,7 @@ $(document).ready(function(){
     }
   });
   $("#joinroom").click(function(){
-    call = client.call(
+    call = APIdazeClientObj.call(
       {
         command: "joinroom",
         username: "guest",

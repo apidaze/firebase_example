@@ -1,8 +1,47 @@
 const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+admin.initializeApp(functions.config().firebase);
+
+function buildDialplanForIncomingCalls(firebaseRefKey) {
+  let xml =
+  "<document>\n" +
+  " <variables>" +
+  "   <firebaseRefKey>" + firebaseRefKey + "</firebaseRefKey>" +
+  " </variables>" +
+  " <work>\n" +
+  "   <answer/>\n" +
+  "   <wait>2</wait>\n" +
+  "   <speak>Please wait, we are processing your call</speak>\n" +
+  "   <wait>60</wait>\n" +
+  "   <speak>Sorry, it looks like nobody is available to answer, bye.</speak>\n" +
+  "   <hangup/>\n" +
+  " </work>\n" +
+  "</document>\n";
+
+  return xml;
+}
+
+const incomingCallsRef = admin.database().ref("incomingcalls");
 
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 //
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//  response.send("Hello from Firebase!");
-// });
+exports.apidazeExternalScript = functions.https.onRequest((request, response) => {
+  console.log("request.method	:", JSON.stringify(request.method	))
+  console.log("request.query : ", JSON.stringify(request.query))
+  console.log("request.body : ", JSON.stringify(request.body))
+
+  if (request.query.exiting !== "true"){
+    let ref = incomingCallsRef.push()
+    ref.set(request.query);
+
+    response.set("content-type", "text/xml");
+    response.send(buildDialplanForIncomingCalls(ref.key));
+    return;
+  } else {
+    incomingCallsRef.child(request.query.firebaseRefKey).remove()
+  }
+
+  response.set("content-type", "text/xml");
+  response.send(buildDialplanForIncomingCalls());
+});
