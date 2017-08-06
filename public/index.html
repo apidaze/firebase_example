@@ -49,6 +49,10 @@ php -S localhost:8001
   <div id="callActionsSectionId" style="display: none;margin-top: 10%">
     <hr/>
     <div>
+      <h3>Watching incoming calls to <code id="incomingCallNumberId">N/A</code></h3>
+      <table id="incomingCallsTableId" border="0"></table>
+    </div>
+    <div>
       <h3>Place a call</h3>
       <table border="0">
         <tr>
@@ -60,22 +64,6 @@ php -S localhost:8001
           </td>
           <td>
             <input id="hangup" type="button" disabled="true" style="width: 90px" value="Hangup" />
-          </td>
-        </tr>
-      </table>
-    </div>
-    <div>
-      <h3>Watching incoming calls for <code id="incomingCallNumberId">N/A</code></h3>
-      <table id="incomingCallsTableId" border="0">
-        <tr>
-          <td style="width: 150px">
-            <div id="call_to_answer"></div>
-          </td>
-          <td>
-            <input id="answer" type="button" disabled="true" style="width: 90px" value="Answer" />
-          </td>
-          <td>
-            <input id="hangup-in" type="button" disabled="true" style="width: 90px" value="Hangup" />
           </td>
         </tr>
       </table>

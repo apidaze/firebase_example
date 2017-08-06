@@ -22,7 +22,7 @@ $(document).ready(function(){
         '<input class="answer-button" type="button" style="width: 90px" value="Answer" />' +
       '</td>' +
       '<td>' +
-        '<input class="hangup-button" type="button" style="width: 90px" value="Hangup" />' +
+        '<input class="hangup-button" type="button" style="width: 90px" value="Hangup" disabled/>' +
       '</td>';
 
       let tr = document.createElement("tr");
@@ -32,10 +32,14 @@ $(document).ready(function(){
 
       let onAnswerClicked = function(){
         console.log("Clicked to answer call, uuid : " + this.parentNode.parentNode.getAttribute("uuid"));
+        this.disabled = true;
+        this.parentNode.parentNode.querySelector("input.hangup-button").disabled = false;
+
         let callUUID = this.parentNode.parentNode.getAttribute("uuid");
         call = APIdazeClientObj.call(
           {
             destination_number: "interception",
+            command: "interceptCall",
             uuid_to_intercept: callUUID
           },
           {
@@ -49,7 +53,7 @@ $(document).ready(function(){
       let onHangupClicked = function(){
         console.log("Clicked to hangup call, uuid : " + this.parentNode.parentNode.getAttribute("uuid"));
         call.hangup();
-        this.setAttribute("disabled", true);
+        this.disabled = true
       }
 
       tr.getElementsByClassName("answer-button")[0].onclick = onAnswerClicked;
@@ -77,6 +81,9 @@ $(document).ready(function(){
   const callActionsSectionObj = document.getElementById("callActionsSectionId");
   const incomingCallNumberObj = document.getElementById("incomingCallNumberId");
   const incomingCallsTableObj = document.getElementById("incomingCallsTableId");
+  const outgoingCallStartButtonObj = document.getElementById("call");
+  const outgoingCallHangupButtonObj = document.getElementById("hangup");
+  const outgoingCallNumberObj = document.getElementById("number_to_call");
 
   /**
   * Firebase listeners
@@ -107,58 +114,58 @@ $(document).ready(function(){
     APIdazeClientObj && APIdazeClientObj.freeALL();
     APIdazeClientObj = new APIdaze.CLIENT({
       type:"webrtc",
-      debug:true,
-      audio:true,
-      video:false,
       apiKey: APIdazeAPIkey,
       forcewsurl: "wss://ws2-old.apidaze.io:443",
       onReady: function(){
-        $("#call").attr("disabled", false).val("Call");
+        outgoingCallStartButtonObj.disabled = false;
+        outgoingCallStartButtonObj.setAttribute("value", "Call");
       },
       onDisconnected: function(){
         resetClient();
-        $("#call").attr("disabled", false).val("Call");
+        outgoingCallStartButtonObj.disabled = false;
+        outgoingCallStartButtonObj.setAttribute("value", "Call");
       }
     });
   };
 
   // Place a call
-  $("#call").click(function(){
-    $("#call").attr("disabled", true).val("Calling");
+  outgoingCallStartButtonObj.onclick = function(){
+    outgoingCallStartButtonObj.disabled = true;
+    outgoingCallStartButtonObj.setAttribute("value", "Calling");
+
     call = APIdazeClientObj.call(
       {
-        destination_number: $("#number_to_call").val(),
-        action: "directcall"
+        destination_number: outgoingCallNumberObj.value,
+        number_to_call: outgoingCallNumberObj.value,
+        command: "placeCall"
       },
       {
         onRinging: function() {
           console.log("Call ringing");
-          $("#call").val("Ringing");
+          outgoingCallStartButtonObj.setAttribute("value", "Ringing");
         },
         onAnswer: function() {
           console.log("Call answered");
-          $("#hangup").attr("disabled", false);
-          $("#call").val("In call");
+          outgoingCallHangupButtonObj.disabled = false;
+          outgoingCallStartButtonObj.setAttribute("value", "In call");
           audiostarted = true;
-          console.log("Call answered");
         },
         onHangup: function() {
           console.log("Call hangup");
-          $("#hangup").attr("disabled", true);
-          $("#call").attr("disabled", false).val("Call");
+          outgoingCallHangupButtonObj.disabled = true;
+          outgoingCallStartButtonObj.disabled = false;
+          outgoingCallStartButtonObj.setAttribute("value", "Call");
           resetClient();
         }
       }
     );
-  });
-  $("#hangup").click(function(){
+  }
+
+  outgoingCallHangupButtonObj.onclick = function(){
     call.hangup();
-    $("#hangup").attr("disabled", true);
-  });
-  $("#hangup-in").click(function(){
-    call.hangup();
-    $("#hangup-in").attr("disabled", true);
-  });
+    outgoingCallHangupButtonObj.disabled = true;
+  }
+
   $("#invite_number_to_conference").on("click", "input[type='button']", function(){
     console.log("Clicked invite");
     var number = $("#invite_number_to_conference input[type='text']").val();
