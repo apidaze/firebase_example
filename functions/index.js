@@ -67,6 +67,21 @@ exports.apidazeExternalScript = functions.https.onRequest((request, response) =>
     return;
   }
 
+  if (request.query.command === "joinRoom") {
+    let xml =
+    "<document>\n" +
+    " <work>\n" +
+    "   <answer/>\n" +
+    "   <wait>2</wait>\n" +
+    "   <speak>You are joining the conference</speak>\n" +
+    "   <conference>test</conference>\n" +
+    "   <hangup/>\n" +
+    " </work>\n" +
+    "</document>\n";
+
+    response.send(xml);
+    return;
+  }
 
   if (request.query.exiting !== "true"){
     // Received new request from APIdaze to process call, send XML back and add call to database
