@@ -4,16 +4,71 @@ $(document).ready(function(){
     incomingCallNumberObj.innerHTML = numberString;
   }
 
+  function buildIncomingCallsList(callsList) {
+    incomingCallsTableObj.innerHTML = "";
+
+    if (callsList === null) {
+      return;
+    }
+
+    Object.keys(callsList).map(function(firebaseKey, index) {
+      console.log("[buildIncomingCallsList] callsList[firebaseKey] :", JSON.stringify(callsList[firebaseKey]))
+
+      let html =
+      '<td style="width: 150px">' +
+        '<div>' + callsList[firebaseKey].caller_id_number + '</div>' +
+      '</td>' +
+      '<td>' +
+        '<input class="answer-button" type="button" style="width: 90px" value="Answer" />' +
+      '</td>' +
+      '<td>' +
+        '<input class="hangup-button" type="button" style="width: 90px" value="Hangup" />' +
+      '</td>';
+
+      let tr = document.createElement("tr");
+      tr.setAttribute("id", firebaseKey)
+      tr.setAttribute("uuid", callsList[firebaseKey].uuid)
+      tr.innerHTML = html;
+
+      let onAnswerClicked = function(){
+        console.log("Clicked to answer call, uuid : " + this.parentNode.parentNode.getAttribute("uuid"));
+        let callUUID = this.parentNode.parentNode.getAttribute("uuid");
+        call = APIdazeClientObj.call(
+          {
+            destination_number: "interception",
+            uuid_to_intercept: callUUID
+          },
+          {
+            onHangup: function() {
+              console.log("Call hangup");
+              resetClient();
+            }
+          }
+        );
+      }
+      let onHangupClicked = function(){
+        console.log("Clicked to hangup call, uuid : " + this.parentNode.parentNode.getAttribute("uuid"));
+        call.hangup();
+        this.setAttribute("disabled", true);
+      }
+
+      tr.getElementsByClassName("answer-button")[0].onclick = onAnswerClicked;
+      tr.getElementsByClassName("hangup-button")[0].onclick = onHangupClicked;
+
+      incomingCallsTableObj.appendChild(tr);
+    });
+  }
+
   console.log("Initialized");
-  // Pusher initialization
-  var pusher = new Pusher('9c4d0fbc3061dba493b0');
-  var channel = pusher.subscribe('YOURAPPKEY');
-  var channel_data = {};
   var current_member_in_room = {}
   var members_in_room = [];
   var other_members_in_room = [];
   var room_name = '';
 
+  // APIdaze APIdazeClientObj initialization
+  var call = {};
+  let APIdazeCallObj = {};
+  var audiostarted = false;
   let APIdazeClientObj = null;
   let APIdazeAPIkey = null;
 
@@ -45,31 +100,9 @@ $(document).ready(function(){
 
   firebase.database().ref('incomingcalls').on('value', function(snapshot) {
     console.log("incomingcalls updated", JSON.stringify(snapshot.val()))
-    apiKeyObj.innerHTML = snapshot.val() || "Please set the 'apikey' attribute in Firebase";
-    APIdazeAPIkey = snapshot.val();
-    if (snapshot.val() === null) {
-      callActionsSectionObj.style.display = "none";
-    } else {
-      callActionsSectionObj.style.display = "inherit";
-      resetClient();
-    }
+    buildIncomingCallsList(snapshot.val())
   });
 
-  channel.bind('incomingcall', function(data) {
-    console.log("PUSHER incomingcall event received with uuid : " + data.uuid + ", caller id number : " + data.caller_id_number + ", exiting : " + data.exiting);
-    channel_data = data; // Fill channel_data with what we received from Pusher
-    $("#call_to_answer").text(data.caller_id_number);
-    $("#answer").attr("disabled", false);
-    if (data.exiting === "true") {
-      // Caller has hung up the call
-      $("#answer").attr("disabled", true);
-      $("#call_to_answer").empty();
-      channel_data = {};
-    }
-  });
-  // APIdaze APIdazeClientObj initialization
-  var call = {};
-  var audiostarted = false;
   function resetClient() {
     APIdazeClientObj && APIdazeClientObj.freeALL();
     APIdazeClientObj = new APIdaze.CLIENT({
@@ -88,26 +121,7 @@ $(document).ready(function(){
       }
     });
   };
-  // Answer a call
-  $("#answer").click(function(){
-    $("#hangup-in").attr("disabled", false);
-    $("#answer").attr("disabled", true).val("In call");
-    call = APIdazeClientObj.call(
-      {
-        destination_number: "interception",
-        uuid_to_intercept: channel_data.uuid
-      },
-      {
-        onHangup: function() {
-          console.log("Call hangup");
-          $("#answer").attr("disabled", false).val("Answer");
-          $("#hangup-in").attr("disabled", true);
-          channel_data = {};
-          resetClient();
-        }
-      }
-    );
-  });
+
   // Place a call
   $("#call").click(function(){
     $("#call").attr("disabled", true).val("Calling");

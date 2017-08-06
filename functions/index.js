@@ -23,15 +23,13 @@ function buildDialplanForIncomingCalls(firebaseRefKey) {
 
 const incomingCallsRef = admin.database().ref("incomingcalls");
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
 exports.apidazeExternalScript = functions.https.onRequest((request, response) => {
   console.log("request.method	:", JSON.stringify(request.method	))
   console.log("request.query : ", JSON.stringify(request.query))
   console.log("request.body : ", JSON.stringify(request.body))
 
   if (request.query.exiting !== "true"){
+    // Received new request from APIdaze to process call, send XML back and add call to database
     let ref = incomingCallsRef.push()
     ref.set(request.query);
 
@@ -39,6 +37,7 @@ exports.apidazeExternalScript = functions.https.onRequest((request, response) =>
     response.send(buildDialplanForIncomingCalls(ref.key));
     return;
   } else {
+    // Received request with 'exiting' parameter set to true, remove call from database
     incomingCallsRef.child(request.query.firebaseRefKey).remove()
   }
 
