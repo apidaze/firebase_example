@@ -201,6 +201,7 @@ joinRoomButtonObj.onclick = function(){
             console.log("call.callID : " + call.callID);
             console.log("member.sessid : " + member.sessid);
             inviteNumberToConferenceTextObj.disabled = false;
+            inviteNumberToConferenceButtonObj.disabled = false;
             let tr = document.createElement("tr");
             tr.setAttribute("id", member.sessid);
             tr.setAttribute("muted", false);
@@ -258,7 +259,7 @@ joinRoomButtonObj.onclick = function(){
         members_in_room.push(event.member);
         other_members_in_room.push(event.member);
         let tr = document.createElement("tr");
-        tr.setAttribute("id", member.sessid);
+        tr.setAttribute("id", event.member.sessid);
         tr.setAttribute("muted", false);
 
         tr.innerHTML =
