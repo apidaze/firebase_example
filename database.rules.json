@@ -1,5 +1,9 @@
 {
   "rules": {
+    "incomingcalls": {
+			".read": true,
+    	".write": false
+    },
     "number": {
 			".read": true,
     	".write": false
