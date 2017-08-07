@@ -1,16 +1,16 @@
 {
   "rules": {
     "incomingcalls": {
-			".read": true,
-    	".write": false
+      ".read": true,
+      ".write": false
     },
     "number": {
-			".read": true,
-    	".write": false
+      ".read": true,
+      ".write": false
     },
     "apikey": {
-			".read": true,
-    	".write": false
+      ".read": true,
+      ".write": false
     }
   }
 }
