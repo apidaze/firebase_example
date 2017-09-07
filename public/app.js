@@ -88,6 +88,9 @@ const inviteNumberToConferenceTextObj = document.getElementById("inviteNumberToC
 const myStatusInRoomObj = document.getElementById("myStatusInRoomId");
 const joinRoomButtonObj = document.getElementById("joinRoomButtonId");
 const membersInRoomObj = document.getElementById("membersInRoomId");
+const rttObj = document.getElementById("rttId");
+const rttAppreciationObj = document.getElementById("rttAppreciationId");
+var rttInterval = null; // Do something we this variable
 
 
 /**
@@ -120,6 +123,7 @@ function resetView() {
   outgoingCallStartButtonObj.setAttribute("value", "Call");
   joinRoomButtonObj.disabled = false;
   joinRoomButtonObj.setAttribute("value", "Join");
+  rttObj.innerHTML = "-1";
 };
 
 function initAPIdazeCLIENT() {
@@ -133,6 +137,7 @@ function initAPIdazeCLIENT() {
       userid: "john"
     },
     onReady: function(){
+      getRTT();
       resetView();
     },
     onDisconnected: function(){
@@ -141,6 +146,24 @@ function initAPIdazeCLIENT() {
   });
 }
 
+function getRTT() {
+  rttInterval = setInterval(function() {
+    APIdazeClientObj.ping(function(rtt){
+      rttObj.innerHTML = rtt;
+      if (rtt <= 50) {
+        rttAppreciationObj.innerHTML = "(good)";
+      } else if (rtt <= 100) {
+        rttAppreciationObj.innerHTML = "(that's ok)";
+      } else if (rtt <= 150) {
+        rttAppreciationObj.innerHTML = "(not bad)";
+      } else if (rtt <= 200) {
+        rttAppreciationObj.innerHTML = "(not good)";
+      } else {
+        rttAppreciationObj.innerHTML = "(too high)";
+      }
+    });
+  }, 2000);
+}
 
 // Place a call
 outgoingCallStartButtonObj.onclick = function(){
@@ -208,31 +231,31 @@ joinRoomButtonObj.onclick = function(){
         membersInRoomObj.innerHTML = "";
         if(typeof members_in_room !== "undefined" && members_in_room !== null && call !== null) {
           members_in_room.forEach(function (member) {
-            console.log("call.callID : " + call.callID);
-            console.log("member.sessid : " + member.sessid);
+            console.log("call.conferenceMemberID : " + call.conferenceMemberID);
+            console.log("member.conferenceMemberID : " + member.conferenceMemberID);
             inviteNumberToConferenceTextObj.disabled = false;
             inviteNumberToConferenceButtonObj.disabled = false;
             let tr = document.createElement("tr");
-            tr.setAttribute("id", member.sessid);
+            tr.setAttribute("id", member.conferenceMemberID);
             tr.setAttribute("muted", false);
 
-            if (member.sessid === call.callID) {
+            if (member.conferenceMemberID == call.conferenceMemberID) {
               tr.innerHTML =
               '<td style="width: 150px">' + member.nickname + ' (me)</td>' +
-              '<td style="width: 100px" id="' + member.sessid + '-energyscore"></td>' +
+              '<td style="width: 100px" id="' + member.conferenceMemberID + '-energyscore"></td>' +
               '<td>' +
-              ' <input class="mute_button" confmemberid="' + member.conferenceMemberID + '" sessid="' + member.sessid + '" type="button" style="width: 90px" value="Toggle Mute" />' +
-              ' <input class="kick_button" sessid="' + member.sessid + '" type="button" style="width: 90px" value="Leave" />'+
+              ' <input class="mute_button" confmemberid="' + member.conferenceMemberID + '" type="button" style="width: 90px" value="Toggle Mute" />' +
+              ' <input class="kick_button" confmemberid="' + member.conferenceMemberID + '" type="button" style="width: 90px" value="Leave" />'+
               '</td>';
 
               current_member_in_room = member;
             } else {
               tr.innerHTML =
               '<td style="width: 150px">' + member.nickname + '</td>' +
-              '<td style="width: 100px" id="' + member.sessid + '-energyscore"></td>' +
+              '<td style="width: 100px" id="' + member.conferenceMemberID + '-energyscore"></td>' +
               '<td>' +
-              ' <input class="mute_button" confmemberid="' + member.conferenceMemberID + '" sessid="' + member.sessid + '" type="button" style="width: 90px" value="Toggle Mute" />' +
-              ' <input class="kick_button" sessid="' + member.sessid + '" type="button" style="width: 90px" value="Kick" />'+
+              ' <input class="mute_button" confmemberid="' + member.conferenceMemberID + '" type="button" style="width: 90px" value="Toggle Mute" />' +
+              ' <input class="kick_button" confmemberid="' + member.conferenceMemberID + '" type="button" style="width: 90px" value="Kick" />'+
               '</td>';
 
               other_members_in_room.push(member);
@@ -240,13 +263,13 @@ joinRoomButtonObj.onclick = function(){
 
             // conference control kick mute
             tr.querySelector("input.kick_button").onclick = function(){
-              console.log("Clicked on kick button sessid : " + this.getAttribute("sessid"));
-              call.kickFromConference(this.getAttribute("sessid"));
+              console.log("Clicked on kick button confmemberid : " + this.getAttribute("confmemberid"));
+              call.kickFromConference(this.getAttribute("confmemberid"));
             }
 
             // conference control mute mute
             tr.querySelector("input.mute_button").onclick = function(){
-              console.log("Clicked on mute button conference_member_id : " + this.getAttribute("confmemberid"));
+              console.log("Clicked on mute button confmemberid : " + this.getAttribute("confmemberid"));
               var muted = this.parentNode.parentNode.getAttribute("muted");
               console.log("muted : " + muted);
               if (muted === "true") {
@@ -269,21 +292,20 @@ joinRoomButtonObj.onclick = function(){
         members_in_room.push(member);
         other_members_in_room.push(member);
         let tr = document.createElement("tr");
-        tr.setAttribute("id", member.sessid);
+        tr.setAttribute("id", member.conferenceMemberID);
         tr.setAttribute("muted", false);
 
         tr.innerHTML =
         '<td style="width: 150px">' + member.nickname + ' </td>' +
-        '<td style="width: 150px" id="' + member.sessid + '-energyscore"></td>' +
+        '<td style="width: 150px" id="' + member.conferenceMemberID + '-energyscore"></td>' +
         '<td>' +
-        ' <input class="mute_button" confmemberid="' + member.conferenceMemberID + '" sessid="' + member.sessid + '" type="button" style="width: 90px" value="Toggle Mute" />' +
-        ' <input class="kick_button" sessid="' + member.sessid + '" type="button" style="width: 90px" value="Kick" />' +
+        ' <input class="mute_button" confmemberid="' + member.conferenceMemberID + '" type="button" style="width: 90px" value="Toggle Mute" />' +
+        ' <input class="kick_button" confmemberid="' + member.conferenceMemberID + '" type="button" style="width: 90px" value="Kick" />' +
         '</td>';
 
         // conference control kick mute
         tr.querySelector("input.kick_button").onclick = function(){
-          console.log("Clicked on kick button sessid : " + this.getAttribute("sessid"));
-          call.kickFromConference(this.getAttribute("sessid"));
+          call.kickFromConference(this.getAttribute("confmemberid"));
         }
 
         // conference control mute mute
@@ -302,18 +324,18 @@ joinRoomButtonObj.onclick = function(){
       },
       onRoomDel: function(member) {
         console.log('Member left : ' + JSON.stringify(member));
-        document.getElementById(member.sessid).remove();
-        if(call !== null && member.sessid === call.callID) {
+        document.getElementById(member.conferenceMemberID).remove();
+        if(call !== null && member.conferenceMemberID === call.callID) {
           current_member_in_room = '';
         }
         for (var index = 0; index < members_in_room.length; index++){
-          if (members_in_room[index].sessid === member.sessid) {
+          if (members_in_room[index].conferenceMemberID === member.conferenceMemberID) {
             members_in_room.splice(index,1);
             console.log('after user left members : ' + JSON.stringify(members_in_room));
           }
         }
         for (var index = 0; index < other_members_in_room.length; index++){
-          if (other_members_in_room[index].sessid === member.sessid) {
+          if (other_members_in_room[index].conferenceMemberID === member.conferenceMemberID) {
             other_members_in_room.splice(index,1);
             console.log('after user left other members : ' + JSON.stringify(other_members_in_room));
           }
@@ -321,8 +343,8 @@ joinRoomButtonObj.onclick = function(){
       },
       onRoomTalking: function(member) {
         console.log("Talking event : " + JSON.stringify(member));
-        let memberObj = document.getElementById(member.sessid);
-        let energyScoreTextObj = document.getElementById(member.sessid + "-energyscore");
+        let memberObj = document.getElementById(member.conferenceMemberID);
+        let energyScoreTextObj = document.getElementById(member.conferenceMemberID + "-energyscore");
 
         energyScoreTextObj.innerHTML = member.energyScore;
         if (member.muted === true) {
