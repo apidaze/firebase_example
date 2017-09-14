@@ -75,7 +75,7 @@ var conferenceCall = null;
 var audiostarted = false;
 var APIdazeClientObj = null;
 var APIdazeAPIkey = null;
-var activeNumber = "33170567760";
+var activeNumber = "N/A";
 
 const activeNumberObj = document.getElementById("activeNumberId");
 const apiKeyObj = document.getElementById("apiKeyId");
@@ -205,7 +205,7 @@ inviteNumberToConferenceButtonObj.onclick = function(){
   console.log("Clicked invite");
   var number = inviteNumberToConferenceTextObj.value;
   console.log("Number : " + number);
-  call.inviteToConference(number, activeNumber);
+  conferenceCall.inviteToConference(number, activeNumber);
 }
 
 joinRoomButtonObj.onclick = function(){
