@@ -67,7 +67,6 @@ console.log("Initialized");
 var current_member_in_room = {}
 var members_in_room = [];
 var other_members_in_room = [];
-var room_name = '';
 
 // APIdaze APIdazeClientObj initialization
 var call = null;
@@ -215,18 +214,12 @@ joinRoomButtonObj.onclick = function(){
       userName: "guest",
     },
     {
-      onRoomInit: function(event) {
-        console.log('RoomInit : ' + JSON.stringify(event.roomname));
-        joinRoomButtonObj.disabled = true;
-        myStatusInRoomObj.innerHTML = "In '" + event.roomname + "'";
-
-        room_name = event.roomname;
-      },
       onRoomMembersInitialList: function(members) {
         console.log('Got members for this room : ' + JSON.stringify(members));
         members_in_room = members;
         other_members_in_room = [];
         membersInRoomObj.innerHTML = "";
+        joinRoomButtonObj.disabled = true;
         if(typeof members_in_room !== "undefined" && members_in_room !== null && conferenceCall !== null) {
           members_in_room.forEach(function (member) {
             console.log("call.conferenceMemberID : " + conferenceCall.conferenceMemberID);
