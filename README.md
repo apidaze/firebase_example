@@ -21,8 +21,11 @@ Make sure you have the `firebase-tools` NPM module installed globally :
 ```
 $ npm install -g firebase-tools
 ```
-Then proceed with starting your application locally
-
+Then proceed with logging in
+```
+$ firebase login
+```
+And initialize, then start your application locally
 ```
 $ git clone https://github.com/apidaze/firebase_example.git
 $ cd firebase_example
