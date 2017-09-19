@@ -131,7 +131,7 @@ function initAPIdazeCLIENT() {
   APIdazeClientObj = new APIdaze.CLIENT({
     type:"webrtc",
     apiKey: APIdazeAPIkey,
-    wsurl: "wss://ws2-old.apidaze.io:443",
+    wsurl: "wss://ws2-dev-fr-par-1.apidaze.io:443",
     debug: true,
     onReady: function(){
       getRTT();
