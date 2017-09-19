@@ -107,7 +107,7 @@ exports.apidazeExternalScript = functions.https.onRequest((request, response) =>
     "   <wait>2</wait>\n" +
     "   <speak>Welcome, you are joining the conference</speak>\n" +
     "   <conference username='" + request.query.userName + "'>test</conference>\n" +
-    "   <wait>600</wait>\n" +
+    "   <wait>5</wait>\n" +
     "   <hangup/>\n" +
     " </work>\n" +
     "</document>\n";
