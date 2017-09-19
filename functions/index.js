@@ -128,6 +128,7 @@ exports.apidazeExternalScript = functions.https.onRequest((request, response) =>
       return;
     } else {
       response.status(200);
+      response.send("");
       return;
     }
   } else {
@@ -135,5 +136,6 @@ exports.apidazeExternalScript = functions.https.onRequest((request, response) =>
     incomingCallsRef.child(request.query.firebaseRefKey).remove()
   }
 
+  response.status(200);
   response.send(buildDialplanForIncomingCalls());
 });
