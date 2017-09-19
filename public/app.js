@@ -208,6 +208,7 @@ inviteNumberToConferenceButtonObj.onclick = function(){
 }
 
 joinRoomButtonObj.onclick = function(){
+  joinRoomButtonObj.disabled = true;
   conferenceCall = APIdazeClientObj.call(
     {
       command: "joinRoom",
@@ -219,7 +220,6 @@ joinRoomButtonObj.onclick = function(){
         members_in_room = members;
         other_members_in_room = [];
         membersInRoomObj.innerHTML = "";
-        joinRoomButtonObj.disabled = true;
         if(typeof members_in_room !== "undefined" && members_in_room !== null && conferenceCall !== null) {
           members_in_room.forEach(function (member) {
             console.log("call.conferenceMemberID : " + conferenceCall.conferenceMemberID);
