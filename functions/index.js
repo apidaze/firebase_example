@@ -49,10 +49,24 @@ exports.apidazeOnCallerHangup = functions.https.onRequest((request, response) =>
 
 
 exports.apidazeExternalScript = functions.https.onRequest((request, response) => {
-  console.log("request.method	:", JSON.stringify(request.method	))
+  console.log("request.method	:", JSON.stringify(request.method))
   console.log("request.query : ", JSON.stringify(request.query))
   console.log("request.body : ", JSON.stringify(request.body))
   response.set("content-type", "text/xml");
+
+
+  /**
+   * Handle POST requests
+   *
+   * If we receive a request with type === "sendText", reply in JSON
+   * and return
+   */
+  if (request.body.type === "sendText") {
+    response.set("content-type", "application/json");
+    response.status(200);
+    response.send('{"ok": true, "message": "Hello, your message reached us, thanks !"}');
+    return;
+  }
 
   if (request.query.command === "auth") {
     if (request.query.userid && typeof request.query.userid === "string") {
