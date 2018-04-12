@@ -30,6 +30,26 @@ admin.database().ref('number').on('value', function(snapshot) {
 const incomingCallsRef = admin.database().ref("incomingcalls");
 let callingNumber = "0000000000";
 
+exports.apidazeOnAnswer = functions.https.onRequest((request, response) => {
+  console.log("request.method :", JSON.stringify(request.method ));
+  console.log("request.query : ", JSON.stringify(request.query));
+  console.log("request.body : ", JSON.stringify(request.body));
+  response.set("content-type", "text/xml");
+  var xml =
+    "<document>\n" +
+    "  <variables>\n" +
+    "    <inputTimeout>10</inputTimeout>\n" +
+    "    <answerWithDigit>1</answerWithDigit>\n" +
+    "  </variables>\n" +
+    "  <work>\n" +
+    "    <speak>Incoming Call bot call. Press 1 to accept.</speak>\n" +
+    "  <work>\n" +
+    "</document>\n";
+
+  response.send(xml);
+  return;
+});
+
 exports.apidazeOnCallerHangup = functions.https.onRequest((request, response) => {
   console.log("request.method :", JSON.stringify(request.method ));
   console.log("request.query : ", JSON.stringify(request.query));
