@@ -88,6 +88,7 @@ const inviteNumberToConferenceButtonObj = document.getElementById("inviteNumberT
 const inviteNumberToConferenceTextObj = document.getElementById("inviteNumberToConferenceTextId");
 const myStatusInRoomObj = document.getElementById("myStatusInRoomId");
 const joinRoomButtonObj = document.getElementById("joinRoomButtonId");
+const startVideoInRoomButtonObj = document.getElementById("startVideoInRoomButtonId");
 const membersInRoomObj = document.getElementById("membersInRoomId");
 const rttObj = document.getElementById("rttId");
 const rttAppreciationObj = document.getElementById("rttAppreciationId");
@@ -122,8 +123,12 @@ firebase.database().ref('incomingcalls').on('value', function(snapshot) {
 function resetView() {
   outgoingCallStartButtonObj.disabled = false;
   outgoingCallStartButtonObj.setAttribute("value", "Call");
+
   joinRoomButtonObj.disabled = false;
   joinRoomButtonObj.setAttribute("value", "Join");
+
+  startVideoInRoomButtonObj.disabled = true;
+  startVideoInRoomButtonObj.setAttribute("value", "Start Video");
   rttObj.innerHTML = "-1";
 };
 
@@ -207,6 +212,37 @@ inviteNumberToConferenceButtonObj.onclick = function(){
   conferenceCall.inviteToConference(number, activeNumber);
 }
 
+const startVideo = function(){
+  startVideoInRoomButtonObj.disabled = true;
+  startVideoInRoomButtonObj.setAttribute('value', '...');
+
+  conferenceCall.initVideoInConferenceRoom({},
+    function() {
+      console.log('We joined the room, now publish our video stream there');
+      conferenceCall.publishMyVideoInRoom();
+
+      startVideoInRoomButtonObj.disabled = false;
+      startVideoInRoomButtonObj.setAttribute('value', 'Detach Video');
+      startVideoInRoomButtonObj.onclick = detachVideo;
+    },
+    function(err) {
+      console.log('Failed to join room, error :', err);
+      startVideoInRoomButtonObj.disabled = false;
+      startVideoInRoomButtonObj.setAttribute('value', 'Start Video');
+    });
+}
+
+const detachVideo = function(){
+  startVideoInRoomButtonObj.disabled = false;
+  startVideoInRoomButtonObj.setAttribute('value', 'Start Video');
+
+  conferenceCall.detachVideo();
+
+  startVideoInRoomButtonObj.onclick = startVideo;
+}
+
+startVideoInRoomButtonObj.onclick = startVideo ;
+
 joinRoomButtonObj.onclick = function(){
   joinRoomButtonObj.disabled = true;
   conferenceCall = APIdazeClientObj.call(
@@ -217,6 +253,10 @@ joinRoomButtonObj.onclick = function(){
     {
       onRoomMembersInitialList: function(members) {
         console.log('Got members for this room : ' + JSON.stringify(members));
+
+        // Allow to join room in video
+        startVideoInRoomButtonObj.disabled = false;
+
         members_in_room = members;
         other_members_in_room = [];
         membersInRoomObj.innerHTML = "";
@@ -349,7 +389,6 @@ joinRoomButtonObj.onclick = function(){
       },
       onHangup: function(){
         console.log('Hangup ; Conference ');
-        joinRoomButtonObj.disabled = false;
         myStatusInRoomObj.innerHTML = "";
         membersInRoomObj.innerHTML = "";
         inviteNumberToConferenceTextObj.disabled = true;
