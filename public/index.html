@@ -3,25 +3,17 @@
   <script src="//api4.apidaze.io/javascript/releases/APIdaze-latest-dev-master.js"></script>
 </head>
 <body>
-  <div style="margin: 0 auto; width: 50%">
-  <h3>Instructions</h3>
-  <div id="instructionsSectionId">
-    Make sure to have the following database attributes set in Firebase :
-    <code>
-      <ul style="list-style-type: none">
-        <li><b>apikey</b> (your APIdaze API key), mandatory</li>
-        <li><b>number</b> (a phone number provided by APIdaze), optional</li>
-      </ul>
-    </code>
-  </div>
-  <h3>Firebase database</h3>
-  <code>
-    <ul style="list-style-type: none">
-      <li><b>APIdaze API key</b> : <span id="apiKeyId"></span></li>
-      <li><b>Active number</b> : <span id="activeNumberId"></span></li>
-    </ul>
-  </code>
-  <div id="callActionsSectionId" style="display: none;margin-top: 10%">
+  <div style="margin: 0 auto; width: 90%">
+    <div>
+      <h3>Firebase database</h3>
+      <code>
+        <ul style="list-style-type: none">
+          <li><b>APIdaze API key (mandatory)</b> : <span id="apiKeyId"></span></li>
+          <li><b>Active number (optional)</b> : <span id="activeNumberId"></span></li>
+        </ul>
+      </code>
+    </div>
+  <div id="callActionsSectionId" style="display: none;margin-top: 5%">
     <hr/>
     <h3>RTT to server : <span id="rttId">-1</span> ms <span id="rttAppreciationId"></span></h3>
     <div>
@@ -71,6 +63,8 @@
         <tbody id="membersInRoomId">
         </tbody>
       </table>
+      <div id="myVideoContainerId" style="width: 150px; max-height: 100px"></div>
+      <div id="remoteVideosContainerId" style="display: inline-flex; max-height: 300px; margin-top: 1%"></div>
     </div>
   </div>
 </div>

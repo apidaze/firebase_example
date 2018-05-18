@@ -216,7 +216,10 @@ const startVideo = function(){
   startVideoInRoomButtonObj.disabled = true;
   startVideoInRoomButtonObj.setAttribute('value', '...');
 
-  conferenceCall.initVideoInConferenceRoom({},
+  conferenceCall.initVideoInConferenceRoom({
+      localVideoContainerId: 'myVideoContainerId',
+      remoteVideosContainerId: 'remoteVideosContainerId'
+    },
     function() {
       console.log('We joined the room, now publish our video stream there');
       conferenceCall.publishMyVideoInRoom();
