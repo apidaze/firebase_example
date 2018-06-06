@@ -343,6 +343,9 @@ joinRoomButtonObj.onclick = function(){
         '<td>' +
         ' <input class="mute_button" confmemberid="' + member.conferenceMemberID + '" type="button" style="width: 90px" value="Toggle Mute" />' +
         ' <input class="kick_button" confmemberid="' + member.conferenceMemberID + '" type="button" style="width: 90px" value="Kick" />' +
+        '</td>' +
+        '<td>' +
+        ' <div transcriptionid="' + member.sessid + '"/>' +
         '</td>';
 
         // conference control kick mute
