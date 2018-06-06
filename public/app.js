@@ -271,6 +271,7 @@ joinRoomButtonObj.onclick = function(){
             inviteNumberToConferenceButtonObj.disabled = false;
             let tr = document.createElement("tr");
             tr.setAttribute("id", member.conferenceMemberID);
+            tr.setAttribute("sessid", member.sessid);
             tr.setAttribute("muted", false);
 
             if (member.conferenceMemberID == conferenceCall.conferenceMemberID) {
@@ -280,6 +281,9 @@ joinRoomButtonObj.onclick = function(){
               '<td>' +
               ' <input class="mute_button" confmemberid="' + member.conferenceMemberID + '" type="button" style="width: 90px" value="Toggle Mute" />' +
               ' <input class="kick_button" confmemberid="' + member.conferenceMemberID + '" type="button" style="width: 90px" value="Leave" />'+
+              '</td>' +
+              '<td>' +
+              ' <div transcriptionid="' + member.sessid + '"/>' +
               '</td>';
 
               current_member_in_room = member;
@@ -290,6 +294,9 @@ joinRoomButtonObj.onclick = function(){
               '<td>' +
               ' <input class="mute_button" confmemberid="' + member.conferenceMemberID + '" type="button" style="width: 90px" value="Toggle Mute" />' +
               ' <input class="kick_button" confmemberid="' + member.conferenceMemberID + '" type="button" style="width: 90px" value="Kick" />'+
+              '</td>' +
+              '<td>' +
+              ' <div transcriptionid="' + member.sessid + '"/>' +
               '</td>';
 
               other_members_in_room.push(member);
@@ -327,6 +334,7 @@ joinRoomButtonObj.onclick = function(){
         other_members_in_room.push(member);
         let tr = document.createElement("tr");
         tr.setAttribute("id", member.conferenceMemberID);
+        tr.setAttribute("sessid", member.sessid);
         tr.setAttribute("muted", false);
 
         tr.innerHTML =
