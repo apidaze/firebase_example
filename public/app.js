@@ -320,8 +320,16 @@ joinRoomButtonObj.onclick = function(){
               }
             }
 
-
             membersInRoomObj.appendChild(tr);
+
+            // Member added, add Firebase listener to get transcription from Google
+            firebase.database().ref('transcriptions/channels/' + member.sessid).on('value', function(snapshot) {
+              if (!snapshot.val()) {
+                return;
+              }
+              console.log(`Text from channel ${member.sessid} : ${JSON.stringify(snapshot.val())}`);
+              document.querySelector(`div[transcriptionid="${member.sessid}"]`).innerHTML = snapshot.val().message;
+            });
           });
         }
         console.log('current_member_in_room : ' + JSON.stringify(current_member_in_room));
@@ -366,6 +374,15 @@ joinRoomButtonObj.onclick = function(){
         }
 
         membersInRoomObj.appendChild(tr);
+
+        // Member added, add Firebase listener to get transcription from Google
+        firebase.database().ref('transcriptions/channels/' + member.sessid).on('value', function(snapshot) {
+          if (!snapshot.val()) {
+            return;
+          }
+          console.log(`Text from channel ${member.sessid} : ${JSON.stringify(snapshot.val())}`);
+          document.querySelector(`div[transcriptionid="${member.sessid}"]`).innerHTML = snapshot.val().message;
+        });
       },
       onRoomDel: function(member) {
         console.log('Member left : ' + JSON.stringify(member));
@@ -385,6 +402,9 @@ joinRoomButtonObj.onclick = function(){
             console.log('after user left other members : ' + JSON.stringify(other_members_in_room));
           }
         }
+
+        // Remove Firebase reference
+        firebase.database().ref('transcriptions/channels/' + member.sessid).off();
       },
       onRoomTalking: function(member) {
         console.log("Talking event : " + JSON.stringify(member));
