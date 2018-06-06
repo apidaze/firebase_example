@@ -11,6 +11,10 @@
     "apikey": {
       ".read": true,
       ".write": false
+    },
+    "transcriptions": {
+      ".read": true,
+      ".write": false
     }
   }
 }
