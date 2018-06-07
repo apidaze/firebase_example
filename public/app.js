@@ -23,7 +23,12 @@ function buildIncomingCallsList(callsList) {
     '</td>' +
     '<td>' +
     '<input class="hangup-button" type="button" style="width: 90px" value="Hangup" disabled/>' +
+    '</td>' +
+    '<td>' +
+    ' <div transcriptionid="' + callsList[firebaseKey].uuid + '"/>' +
     '</td>';
+
+    let callUUID = callsList[firebaseKey].uuid;
 
     let tr = document.createElement("tr");
     tr.setAttribute("id", firebaseKey)
@@ -35,7 +40,6 @@ function buildIncomingCallsList(callsList) {
       this.disabled = true;
       this.parentNode.parentNode.querySelector("input.hangup-button").disabled = false;
 
-      let callUUID = this.parentNode.parentNode.getAttribute("uuid");
       call = APIdazeClientObj.call(
         {
           destination_number: "interception",
@@ -45,11 +49,13 @@ function buildIncomingCallsList(callsList) {
         {
           onHangup: function() {
             console.log("Call hangup");
+            firebase.database().ref('transcriptions/channels/' + callUUID).off();
             resetView();
           }
         }
       );
     }
+
     let onHangupClicked = function(){
       console.log("Clicked to hangup call, uuid : " + this.parentNode.parentNode.getAttribute("uuid"));
       call.hangup();
@@ -60,6 +66,15 @@ function buildIncomingCallsList(callsList) {
     tr.getElementsByClassName("hangup-button")[0].onclick = onHangupClicked;
 
     incomingCallsTableObj.appendChild(tr);
+
+    // Incoming call is listed, we can now monitor Firebase to get real time transcription
+    firebase.database().ref('transcriptions/channels/' + callUUID).on('value', function(snapshot) {
+      if (!snapshot.val()) {
+        return;
+      }
+      console.log(`Text from channel ${callUUID} : ${JSON.stringify(snapshot.val())}`);
+      document.querySelector(`div[transcriptionid="${callUUID}"]`).innerHTML = snapshot.val().message;
+    });
   });
 }
 
