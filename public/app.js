@@ -19,10 +19,13 @@ function buildIncomingCallsList(callsList) {
     '<div>' + callsList[firebaseKey].caller_id_number + '</div>' +
     '</td>' +
     '<td>' +
-    '<input class="answer-button" type="button" style="width: 90px" value="Answer" />' +
+    '<input class="answer-button btn btn-default" type="button" style="width: 90px" value="Answer" />' +
     '</td>' +
     '<td>' +
-    '<input class="hangup-button" type="button" style="width: 90px" value="Hangup" disabled/>' +
+    '<input class="hangup-button btn btn-default" type="button" style="width: 90px" value="Hangup" disabled/>' +
+    '</td>' +
+    '<td>' +
+    ' <div transcriptionid="' + callsList[firebaseKey].uuid + '"/>' +
     '</td>';
 
     let tr = document.createElement("tr");
@@ -153,15 +156,15 @@ function getRTT() {
     APIdazeClientObj.ping(function(rtt){
       rttObj.innerHTML = rtt;
       if (rtt <= 50) {
-        rttAppreciationObj.innerHTML = "(good)";
+        rttAppreciationObj.innerHTML = ' - <span style="color:green">good</span>';
       } else if (rtt <= 100) {
-        rttAppreciationObj.innerHTML = "(that's ok)";
+        rttAppreciationObj.innerHTML = ' - <span style="color:green">ok</span>';
       } else if (rtt <= 150) {
-        rttAppreciationObj.innerHTML = "(not bad)";
+        rttAppreciationObj.innerHTML = ' - <span style="color:gray">not bad</span>';
       } else if (rtt <= 200) {
-        rttAppreciationObj.innerHTML = "(not good)";
+        rttAppreciationObj.innerHTML = ' - <span style="color:orange">not good</span>';
       } else {
-        rttAppreciationObj.innerHTML = "(too high)";
+        rttAppreciationObj.innerHTML = ' - <span style="color:red">too high</span>';
       }
     });
   }, 2000);
@@ -278,8 +281,8 @@ joinRoomButtonObj.onclick = function(){
               '<td style="width: 150px">' + member.nickname + ' (me)</td>' +
               '<td style="width: 100px" id="' + member.conferenceMemberID + '-energyscore"></td>' +
               '<td>' +
-              ' <input class="mute_button" confmemberid="' + member.conferenceMemberID + '" type="button" style="width: 90px" value="Toggle Mute" />' +
-              ' <input class="kick_button" confmemberid="' + member.conferenceMemberID + '" type="button" style="width: 90px" value="Leave" />'+
+              ' <input class="mute_button btn btn-default" confmemberid="' + member.conferenceMemberID + '" type="button" style="width: 100px" value="Toggle Mute" />' +
+              ' <input class="kick_button btn btn-default" confmemberid="' + member.conferenceMemberID + '" type="button" style="width: 90px" value="Leave" />'+
               '</td>';
 
               current_member_in_room = member;
@@ -288,8 +291,8 @@ joinRoomButtonObj.onclick = function(){
               '<td style="width: 150px">' + member.nickname + '</td>' +
               '<td style="width: 100px" id="' + member.conferenceMemberID + '-energyscore"></td>' +
               '<td>' +
-              ' <input class="mute_button" confmemberid="' + member.conferenceMemberID + '" type="button" style="width: 90px" value="Toggle Mute" />' +
-              ' <input class="kick_button" confmemberid="' + member.conferenceMemberID + '" type="button" style="width: 90px" value="Kick" />'+
+              ' <input class="mute_button btn btn-default" confmemberid="' + member.conferenceMemberID + '" type="button" style="width: 100px" value="Toggle Mute" />' +
+              ' <input class="kick_button btn btn-default" confmemberid="' + member.conferenceMemberID + '" type="button" style="width: 90px" value="Kick" />'+
               '</td>';
 
               other_members_in_room.push(member);

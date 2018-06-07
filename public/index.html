@@ -1,70 +1,121 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+  <title>VI Apidaze Firebase Example</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <script src="//api4.apidaze.io/javascript/releases/APIdaze-latest-dev-master.js"></script>
+  <style>
+      body {
+      padding-top: 20px;
+      padding-bottom: 20px;
+    }
+    .header {
+      padding-bottom: 20px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    .header h3 {
+      margin-top: 0;
+      margin-bottom: 0;
+      line-height: 40px;
+    }
+  </style>
 </head>
 <body>
-  <div style="margin: 0 auto; width: 90%">
-    <div>
-      <h3>Firebase database</h3>
-      <code>
-        <ul style="list-style-type: none">
-          <li><b>APIdaze API key (mandatory)</b> : <span id="apiKeyId"></span></li>
-          <li><b>Active number (optional)</b> : <span id="activeNumberId"></span></li>
+<div class="container">
+  <div class="header clearfix">
+    <nav>
+      <ul class="nav pull-right">
+        <li role="presentation"><a class="btn btn-default" target="_blank" href="https://github.com/apidaze/firebase_example"><i class="fa fa-github"></i>&nbsp; View on Github</a></li>
+      </ul>
+    </nav>
+    <h3 class="text-muted">VI Apidaze Firebase Example</h3>
+  </div><br><br>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Firebase configuration</h3>
+        </div>
+        <div class="panel-body">
+          Please ensure to add the appropriate fields and values in your Firebase database per the <a target="_blank" href="https://github.com/apidaze/firebase_example">documentation.</a>
+            In order to receive inbound calls, also make sure to add a phone number and configure the appropriate URL for this Firebase application, also per the documentation.
+        </div>
+        <ul class="list-group" style="list-style-type: none">
+          <li class="list-group-item"><b>APIdaze API key (mandatory)</b> : <span id="apiKeyId"></span>
+          <br><b>Active phone number (optional)</b> : <span id="activeNumberId"></span></li>
         </ul>
-      </code>
+      </div>
     </div>
-  <div id="callActionsSectionId" style="display: none;margin-top: 5%">
-    <hr/>
-    <h3>RTT to server : <span id="rttId">-1</span> ms <span id="rttAppreciationId"></span></h3>
-    <div>
-      <h3>Watching incoming calls to <code id="incomingCallNumberId">N/A</code></h3>
-      <table id="incomingCallsTableId" border="0"></table>
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Application server details</h3>
+        </div>
+        <div class="panel-body">
+          <h4>RTT to server : <span id="rttId">-1</span> ms <span id="rttAppreciationId"></span></h4>
+        </div>
+      </div>
     </div>
-    <div>
-      <h3>Place a call</h3>
-      <table border="0">
-        <tr>
-          <td style="width: 150px">
-            <input id="outgoingCallNumberId" type="text" placeholder="E.g. : 33123456789"/>
-          </td>
-          <td>
-            <input id="outgoingCallStartButtonId" type="button" disabled="true" style="width: 90px" value="Loading..." />
-          </td>
-          <td>
-            <input id="outgoingCallHangupButtonId" type="button" disabled="true" style="width: 90px" value="Hangup" />
-          </td>
-        </tr>
-      </table>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Answer incoming calls to <code id="incomingCallNumberId">[not configured]</code> via WebRTC</h3>
+        </div>
+        <div class="panel-body">
+          Incoming calls to the configured phone number in Firebase will appear here which you can answer in your browser.
+        </div>
+        <div id="callActionsSectionId" style="display: none;margin-top: 5%">
+          <table id="incomingCallsTableId" class="table" border="0"></table>
+        </div>
+      </div>
     </div>
-    <div>
-      <h3>Conference</h3>
-      <table border="0">
-        <tr>
-          <td style="width: 150px">
-            <div id="myStatusInRoomId"></div>
-          </td>
-          <td>
-            <input id="joinRoomButtonId" type="button" disabled="true" style="width: 90px" value="Loading..." class="kick_button" />
-          </td>
-          <td>
-            <input id="startVideoInRoomButtonId" type="button" disabled="true" style="width: 90px" value="Loading..." />
-          </td>
-        </tr>
-        <tr id="invite_number_to_conference" >
-          <td style="width: 150px">
-            <input id="inviteNumberToConferenceTextId" type="text" placeholder="E.g. : 33123456789" disabled=true/>
-          </td>
-          <td>
-            <input id="inviteNumberToConferenceButtonId" type="button" style="width: 90px" value="Invite phone" disabled=true/>
-          </td>
-        </tr>
-      </table>
-      <table id="members_in_room_id">
-        <tbody id="membersInRoomId">
-        </tbody>
-      </table>
-      <div id="myVideoContainerId" style="width: 150px; max-height: 100px"></div>
-      <div id="remoteVideosContainerId" style="display: inline-flex; max-height: 300px; margin-top: 1%"></div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Place a call to a phone number via WebRTC</h3>
+        </div>
+        <div class="panel-body">
+          <p>Enter a phone number to call using country code + number.</p>
+          <form class="form-inline">
+            <input id="outgoingCallNumberId" type="text" placeholder="E.g. : 15558675309" class="form-control" /><input id="outgoingCallStartButtonId" disabled="true" type="button" class="btn btn-default" value="Loading..."><input id="outgoingCallHangupButtonId" disabled="true" type="button" class="btn btn-default" value="Hangup">
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Create a conference bridge via WebRTC</h3>
+        </div>
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-md-6">
+              <input id="joinRoomButtonId" type="button" disabled="true" style="width: 90px" value="Loading..." class="kick_button btn btn-default" />
+              <input id="startVideoInRoomButtonId" type="button" disabled="true" style="width: 90px" value="Loading..." class="btn btn-default" />
+              <br><br>&nbsp;<div id="myStatusInRoomId"></div>
+            </div>
+            <div class="col-md-6">
+              <input id="inviteNumberToConferenceTextId" type="text" placeholder="E.g. : 15558675309" disabled=true class="btn btn-default" />
+              <input id="inviteNumberToConferenceButtonId" type="button" value="Invite phone" disabled=true class="btn btn-default" />
+            </div>
+          </div>
+          <table id="members_in_room_id" class="table">
+            <tbody id="membersInRoomId">
+            </tbody>
+          </table>
+          <div id="myVideoContainerId" style="width: 150px; max-height: 100px"></div>
+          <div id="remoteVideosContainerId" style="display: inline-flex; max-height: 300px; margin-top: 1%"></div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
