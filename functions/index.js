@@ -2,6 +2,10 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp();
 
+const transribedChannelsRef = admin.database().ref("transcriptions/channels");
+const incomingCallsRef = admin.database().ref("incomingcalls");
+let callingNumber = "0000000000";
+
 function buildDialplanForIncomingCalls(firebaseRefKey) {
   let xml =
   "<document>\n" +
@@ -26,9 +30,6 @@ admin.database().ref('number').on('value', function(snapshot) {
   console.log("numbers updated", snapshot.val())
   callingNumber = snapshot.val();
 });
-
-const incomingCallsRef = admin.database().ref("incomingcalls");
-let callingNumber = "0000000000";
 
 exports.apidazeOnAnswer = functions.https.onRequest((request, response) => {
   console.log("request.method :", JSON.stringify(request.method ));
@@ -140,6 +141,7 @@ exports.apidazeExternalScript = functions.https.onRequest((request, response) =>
     "   <answer/>\n" +
     "   <wait>2</wait>\n" +
     "   <speak>Welcome, you are joining the conference</speak>\n" +
+    "   <record transcription-url='https://us-central1-apidaze-example.cloudfunctions.net/apidazeOnTranscribedText' />\n" +
     "   <conference username='" + request.query.userName + "'>test</conference>\n" +
     "   <wait>5</wait>\n" +
     "   <hangup/>\n" +
@@ -173,3 +175,14 @@ exports.apidazeExternalScript = functions.https.onRequest((request, response) =>
   response.status(200);
   response.send(buildDialplanForIncomingCalls());
 });
+
+exports.apidazeOnTranscribedText = functions.https.onRequest((request, response) => {
+  console.log("request.method :", JSON.stringify(request.method ));
+  console.log("request.query : ", JSON.stringify(request.query));
+  console.log("request.body : ", JSON.stringify(request.body));
+
+  const channelRef = transribedChannelsRef.child(request.body.name);
+  channelRef.set({ message : request.body.transcription });
+  return;
+});
+
