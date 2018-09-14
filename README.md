@@ -1,4 +1,4 @@
-# APIdaze WebRTC + phone conferencing + Firebase
+# APIdaze WebRTC + voice/video conferencing + Firebase
 This is an example of how to build WebRTC + telecom applications with APIdaze
 and Firebase.
 
