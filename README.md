@@ -7,7 +7,7 @@ and Firebase.
 This application is deployed to https://apidaze-example.firebaseapp.com.
 If you'd like to host this code, you just need to set up your own Firebase web
 application and clone/deploy this repository. You will also need to have
-an application created at APIdaze (https://developers.apidaze.io).
+an application created at APIdaze (https://voipinnovations.com/programmable).
 
 ## Create your Firebase application
 
@@ -50,7 +50,7 @@ The URL that has been created as a Function URL needs to be used
 in APIdaze as your External Script. It should look like this :
 `https://us-central1-name-of-your-firebase-application.cloudfunctions.net/apidazeExternalScript`
 
-Just copy and pasted it when you create your External Script at https://developers.apidaze.io
+Just copy and pasted it when you create your External Script at VoIP Innovations: https://voipinnovations.com/programmable
 
 # Control application from the Firebase database
 
